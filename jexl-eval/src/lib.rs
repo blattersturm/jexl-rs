@@ -291,7 +291,18 @@ impl<'a> Evaluator<'a> {
             (OpCode::Add, Value::String(a), Value::String(b)) => Ok(value!(format!("{}{}", a, b))),
             (OpCode::In, Value::String(a), Value::String(b)) => Ok(value!(b.contains(&a))),
             (OpCode::In, left, Value::Array(v)) => Ok(value!(v.contains(&left))),
+
             (OpCode::Equal, Value::String(a), Value::String(b)) => Ok(value!(a == b)),
+            (OpCode::NotEqual, Value::String(a), Value::String(b)) => Ok(value!(a != b)),
+
+            (OpCode::Equal, Value::Null, Value::Null) => Ok(value!(true)),
+            (OpCode::Equal, Value::Null, _) => Ok(value!(false)),
+            (OpCode::Equal, _, Value::Null) => Ok(value!(false)),
+
+            (OpCode::NotEqual, Value::Null, Value::Null) => Ok(value!(false)),
+            (OpCode::NotEqual, Value::Null, _) => Ok(value!(true)),
+            (OpCode::NotEqual, _, Value::Null) => Ok(value!(true)),
+
             (operation, left, right) => Err(EvaluationError::InvalidBinaryOp {
                 operation,
                 left,
